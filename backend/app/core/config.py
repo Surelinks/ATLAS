@@ -13,8 +13,12 @@ class Settings(BaseSettings):
     APP_VERSION: str = "1.0.0"
     ENVIRONMENT: str = "development"
     
-    # OpenAI
-    OPENAI_API_KEY: str
+    # LLM Configuration (supports multiple providers)
+    LLM_PROVIDER: str = "ollama"  # Options: openai, grok, ollama, local
+    OPENAI_API_KEY: str = ""
+    GROK_API_KEY: str = ""
+    OLLAMA_BASE_URL: str = "http://localhost:11434"
+    OLLAMA_MODEL: str = "llama3"  # or mistral, codellama, etc.
     
     # Database
     DATABASE_URL: str = "sqlite:///./atlas_ai.db"
@@ -26,7 +30,12 @@ class Settings(BaseSettings):
     API_RELOAD: bool = True
     
     # CORS
-    ALLOWED_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8501"]
+    ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:8501"
+    
+    @property
+    def cors_origins(self) -> List[str]:
+        """Parse CORS origins from comma-separated string"""
+        return [origin.strip() for origin in self.ALLOWED_ORIGINS.split(",")]
     
     # Logging
     LOG_LEVEL: str = "INFO"
