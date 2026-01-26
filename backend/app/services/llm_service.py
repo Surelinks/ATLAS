@@ -79,13 +79,14 @@ class OllamaProvider(LLMProvider):
             return response.json()["embedding"]
 
 
-class GrokProvider(LLMProvider):
-    """Grok provider - FREE tier available"""
+class GroqProvider(LLMProvider):
+    """Groq provider - FREE tier with high limits"""
     
-    def __init__(self, api_key: str):
+    def __init__(self, api_key: str, model: str = "llama3-70b-8192"):
         self.api_key = api_key
-        self.base_url = "https://api.x.ai/v1"
-        logger.info("Initialized Grok provider")
+        self.model = model
+        self.base_url = "https://api.groq.com/openai/v1"
+        logger.info(f"Initialized Groq provider with model: {model}")
     
     async def generate(
         self,
@@ -94,7 +95,7 @@ class GrokProvider(LLMProvider):
         temperature: float = 0.7,
         max_tokens: int = 1000
     ) -> str:
-        """Generate using Grok"""
+        """Generate using Groq"""
         async with httpx.AsyncClient() as client:
             messages = []
             if system_prompt:
@@ -103,9 +104,12 @@ class GrokProvider(LLMProvider):
             
             response = await client.post(
                 f"{self.base_url}/chat/completions",
-                headers={"Authorization": f"Bearer {self.api_key}"},
+                headers={
+                    "Authorization": f"Bearer {self.api_key}",
+                    "Content-Type": "application/json"
+                },
                 json={
-                    "model": "grok-beta",
+                    "model": self.model,
                     "messages": messages,
                     "temperature": temperature,
                     "max_tokens": max_tokens
@@ -116,10 +120,21 @@ class GrokProvider(LLMProvider):
             return response.json()["choices"][0]["message"]["content"]
     
     async def embed(self, text: str) -> List[float]:
-        """Embeddings via Grok (use Ollama fallback if not available)"""
-        # Grok may not have embeddings endpoint, fallback to local
-        logger.warning("Grok embeddings not available, using local model")
-        raise NotImplementedError("Use Ollama for embeddings")
+        """
+        Groq doesn't have embeddings endpoint yet
+        Fall back to sentence-transformers for free local embeddings
+        """
+        try:
+            from sentence_transformers import SentenceTransformer
+            
+            # Use a lightweight model for embeddings
+            model = SentenceTransformer('all-MiniLM-L6-v2')
+            embedding = model.encode(text).tolist()
+            return embedding
+        except ImportError:
+            logger.error("sentence-transformers not installed. Install with: pip install sentence-transformers")
+            # Return zero vector as last resort
+            return [0.0] * 384
 
 
 class OpenAIProvider(LLMProvider):
@@ -178,10 +193,13 @@ class LLMService:
                 base_url=settings.OLLAMA_BASE_URL,
                 model="llama3"  # or mistral, codellama, etc.
             )
-        elif provider_name == "grok":
-            if not settings.GROK_API_KEY:
-                raise ValueError("GROK_API_KEY not set")
-            return GrokProvider(api_key=settings.GROK_API_KEY)
+        elif provider_name == "groq":
+            if not settings.GROQ_API_KEY:
+                raise ValueError("GROQ_API_KEY not set")
+            return GroqProvider(
+                api_key=settings.GROQ_API_KEY,
+                model="llama3-70b-8192"  # Fast, powerful, free!
+            )
         elif provider_name == "openai":
             if not settings.OPENAI_API_KEY:
                 raise ValueError("OPENAI_API_KEY not set")

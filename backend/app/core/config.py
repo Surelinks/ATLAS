@@ -14,9 +14,9 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "development"
     
     # LLM Configuration (supports multiple providers)
-    LLM_PROVIDER: str = "ollama"  # Options: openai, grok, ollama, local
+    LLM_PROVIDER: str = "groq"  # Options: openai, groq, ollama, local
     OPENAI_API_KEY: str = ""
-    GROK_API_KEY: str = ""
+    GROQ_API_KEY: str = ""
     OLLAMA_BASE_URL: str = "http://localhost:11434"
     OLLAMA_MODEL: str = "llama3"  # or mistral, codellama, etc.
     
