@@ -1,0 +1,26 @@
+services:
+  # Backend Service
+  - type: web
+    name: atlas-ai-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile
+    healthCheckPath: /api/v1/health
+
+  # Frontend Service
+  - type: web
+    name: atlas-ai-frontend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: streamlit run ui/app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
+    envVars:
+      - key: API_BASE_URL
+        fromService:
+          type: web
+          name: atlas-ai-backend
+          property: host

@@ -7,6 +7,10 @@ Test script to verify Atlas AI RAG pipeline
 import asyncio
 import sys
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Add backend to path
 sys.path.insert(0, str(Path(__file__).parent / "backend"))
@@ -41,7 +45,7 @@ async def test_rag_pipeline():
     print("\n📊 Vector Store Statistics:")
     stats = rag_service.get_statistics()
     print(f"   Total chunks: {stats['total_chunks']}")
-    print(f"   Documents: {stats['documents']}")
+    print(f"   Documents: {stats['total_documents']}")
     
     # Step 3: Test query
     print("\n🔍 Step 2: Testing RAG query...")

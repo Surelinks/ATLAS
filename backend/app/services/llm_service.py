@@ -82,7 +82,7 @@ class OllamaProvider(LLMProvider):
 class GroqProvider(LLMProvider):
     """Groq provider - FREE tier with high limits"""
     
-    def __init__(self, api_key: str, model: str = "llama3-70b-8192"):
+    def __init__(self, api_key: str, model: str = "llama-3.3-70b-versatile"):
         self.api_key = api_key
         self.model = model
         self.base_url = "https://api.groq.com/openai/v1"
@@ -198,7 +198,7 @@ class LLMService:
                 raise ValueError("GROQ_API_KEY not set")
             return GroqProvider(
                 api_key=settings.GROQ_API_KEY,
-                model="llama3-70b-8192"  # Fast, powerful, free!
+                model="llama-3.3-70b-versatile"  # Fast, powerful, free!
             )
         elif provider_name == "openai":
             if not settings.OPENAI_API_KEY:

@@ -7,7 +7,7 @@ import logging
 from pathlib import Path
 
 from app.services.document_processor import document_processor, DocumentChunk
-from app.services.vector_store import vector_store
+from app.services.simple_vector_store import vector_store
 from app.services.llm_service import llm_service
 
 logger = logging.getLogger(__name__)
@@ -64,7 +64,7 @@ Always prioritize safety and compliance."""
                 }
             
             # Add chunks to vector store
-            await vector_store.add_chunks(chunks)
+            await vector_store.add_chunks(chunks, llm_service)
             
             return {
                 "status": "success",
@@ -115,6 +115,7 @@ Always prioritize safety and compliance."""
             # Step 1: Retrieve relevant chunks
             search_results = await vector_store.search(
                 query=question,
+                llm_service=llm_service,
                 top_k=top_k
             )
             
@@ -126,7 +127,7 @@ Always prioritize safety and compliance."""
                 }
             
             # Step 2: Extract context
-            context_chunks = [r["text"] for r in search_results]
+            context_chunks = [r["chunk"].text for r in search_results]
             
             # Step 3: Generate answer
             answer = await llm_service.generate_with_context(
@@ -144,11 +145,13 @@ Always prioritize safety and compliance."""
             if include_sources:
                 sources = []
                 for i, result in enumerate(search_results):
+                    chunk = result["chunk"]
                     source = {
                         "index": i + 1,
-                        "document": result["metadata"].get("filename", "Unknown"),
-                        "document_id": result["metadata"]["document_id"],
-                        "excerpt": result["text"][:200] + "..."
+                        "document": chunk.metadata.get("filename", "Unknown"),
+                        "document_id": chunk.metadata.get("document_id", "Unknown"),
+                        "excerpt": chunk.text[:200] + "...",
+                        "similarity": result["similarity"]
                     }
                     sources.append(source)
                 

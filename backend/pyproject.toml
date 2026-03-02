@@ -1,0 +1,25 @@
+# Test Configuration for Atlas AI
+# pytest configuration file
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+asyncio_mode = "auto"
+addopts = [
+    "-v",
+    "--strict-markers",
+    "--tb=short",
+    "--cov=app",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+]
+
+markers = [
+    "unit: Unit tests",
+    "integration: Integration tests",
+    "slow: Tests that take significant time",
+    "api: API endpoint tests",
+]
