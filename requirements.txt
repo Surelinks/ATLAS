@@ -6,6 +6,7 @@ python-multipart
 # AI/ML - Only what we actually use
 groq>=0.4.0
 sentence-transformers>=2.0.0
+tiktoken>=0.5.0
 
 # Data Processing
 pandas>=2.0.0
