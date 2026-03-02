@@ -18,6 +18,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -46,7 +47,8 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-API_BASE_URL = "http://localhost:8000"
+# Get API URL from environment variable or use localhost for development
+API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8000")
 
 # ==================== ENHANCED STYLING ====================
 
