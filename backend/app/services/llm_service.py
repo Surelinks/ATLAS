@@ -182,7 +182,14 @@ class LLMService:
     """
     
     def __init__(self):
-        self.provider = self._initialize_provider()
+        self._provider = None
+    
+    @property
+    def provider(self) -> LLMProvider:
+        """Lazy initialization of provider"""
+        if self._provider is None:
+            self._provider = self._initialize_provider()
+        return self._provider
     
     def _initialize_provider(self) -> LLMProvider:
         """Initialize the configured LLM provider"""
