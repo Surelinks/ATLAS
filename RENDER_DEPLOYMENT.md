@@ -38,8 +38,11 @@
    Branch: master
    Root Directory: (leave empty)
    Runtime: Python 3
-   Build Command: pip install -r requirements.txt
+   Build Command: pip install --upgrade pip && pip install -r requirements.txt
    Start Command: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+   
+   IMPORTANT: Under "Advanced" → "Environment" section:
+   - Python Version: 3.11.9 (Render will auto-detect from runtime.txt)
    ```
 
 4. **Add Environment Variables**:
@@ -77,8 +80,10 @@
    Branch: master
    Root Directory: (leave empty)
    Runtime: Python 3
-   Build Command: pip install -r requirements.txt
+   Build Command: pip install --upgrade pip && pip install -r requirements.txt
    Start Command: streamlit run ui/app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true --server.enableCORS false
+   
+   IMPORTANT: Python Version will auto-detect as 3.11.9 from runtime.txt
    ```
 
 3. **Add Environment Variable**:
