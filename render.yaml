@@ -4,11 +4,14 @@ services:
     name: atlas-ai-backend
     runtime: python
     plan: free
-    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    buildCommand: |
+      python --version
+      pip install --upgrade pip setuptools wheel
+      pip install -r requirements.txt
     startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.9
+        value: "3.11"
       - key: GROQ_API_KEY
         sync: false
       - key: GROQ_MODEL
@@ -20,11 +23,14 @@ services:
     name: atlas-ai-frontend
     runtime: python
     plan: free
-    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    buildCommand: |
+      python --version
+      pip install --upgrade pip setuptools wheel
+      pip install -r requirements.txt
     startCommand: streamlit run ui/app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.9
+        value: "3.11"
       - key: API_BASE_URL
         fromService:
           type: web
