@@ -35,7 +35,13 @@ class Settings(BaseSettings):
     @property
     def cors_origins(self) -> List[str]:
         """Parse CORS origins from comma-separated string"""
-        return [origin.strip() for origin in self.ALLOWED_ORIGINS.split(",")]
+        origins = [origin.strip() for origin in self.ALLOWED_ORIGINS.split(",")]
+        
+        # In production, allow all origins or add specific Render URLs
+        if self.ENVIRONMENT == "production" or origins == ["*"]:
+            return ["*"]
+        
+        return origins
     
     # Logging
     LOG_LEVEL: str = "INFO"
