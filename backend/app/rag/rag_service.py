@@ -169,7 +169,7 @@ Always prioritize safety and compliance."""
             }
     
     def get_available_documents(self) -> List[Dict]:
-        """List all ingested documents"""
+        """List all ingested documents with metadata"""
         return vector_store.list_documents()
     
     def get_statistics(self) -> Dict:

@@ -97,9 +97,17 @@ class SimpleVectorStore:
         results.sort(key=lambda x: x["similarity"], reverse=True)
         return results[:top_k]
     
-    def list_documents(self) -> List[str]:
-        """List all document IDs"""
-        return list(self.documents.keys())
+    def list_documents(self) -> List[Dict]:
+        """List all documents with metadata"""
+        docs = []
+        for doc_id, chunks in self.documents.items():
+            if chunks:
+                docs.append({
+                    "id": doc_id,
+                    "name": chunks[0].metadata.get("filename", doc_id),
+                    "chunk_count": len(chunks)
+                })
+        return docs
     
     def get_document_chunks(self, document_id: str) -> List[DocumentChunk]:
         """Get all chunks for a document"""

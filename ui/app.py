@@ -1052,10 +1052,13 @@ elif selected_module == "Operations Copilot":
                             call_api("/api/v1/ops-copilot/ingest", method="POST", files=files)
                         )
                         
-                        if result:
-                            st.success(f"Processed: {file.name}")
+                        if result and result.get("status") == "success":
+                            chunk_count = result.get("chunk_count", "?")
+                            st.success(f"✅ Processed: {file.name} ({chunk_count} chunks)")
+                        elif result and result.get("status") == "error":
+                            st.error(f"❌ Failed: {file.name} - {result.get('message', 'Unknown error')}")
                         else:
-                            st.error(f"Failed: {file.name}")
+                            st.error(f"❌ Failed: {file.name} - No response from server")
         
         # Document list
         st.markdown("#### Indexed Documents")
