@@ -675,7 +675,7 @@ def export_to_csv(data: List[Dict], filename: str):
         data=csv,
         file_name=f"{filename}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
         mime="text/csv",
-        use_container_width=True
+        width="stretch"
     )
 
 def paginate_data(data: List, page: int, page_size: int) -> tuple:
@@ -757,13 +757,13 @@ with st.sidebar:
     
     theme_col1, theme_col2 = st.columns(2)
     with theme_col1:
-        if st.button("🌙 Dark", use_container_width=True, 
+        if st.button("🌙 Dark", , 
                     disabled=st.session_state.theme == "dark"):
             st.session_state.theme = "dark"
             st.rerun()
     
     with theme_col2:
-        if st.button("☀️ Light", use_container_width=True,
+        if st.button("☀️ Light", ,
                     disabled=st.session_state.theme == "light"):
             st.session_state.theme = "light"
             st.rerun()
@@ -953,7 +953,7 @@ if selected_module == "Dashboard":
                     showlegend=False
                 )
                 
-                st.plotly_chart(fig_temp, use_container_width=True)
+                st.plotly_chart(fig_temp, width="stretch")
         
         with tab2:
             breaker_data = {
@@ -1109,7 +1109,7 @@ elif selected_module == "Operations Copilot":
             cols = st.columns(2)
             for idx, query in enumerate(demo_queries):
                 with cols[idx % 2]:
-                    if st.button(query, key=f"demo_{idx}", use_container_width=True):
+                    if st.button(query, key=f"demo_{idx}", width="stretch"):
                         st.session_state.messages.append({"role": "user", "content": query})
         
         # Chat messages
@@ -1143,7 +1143,7 @@ elif selected_module == "Operations Copilot":
                 label_visibility="collapsed",
                 placeholder="Type your question here..."
             )
-            submit = st.form_submit_button("Send", type="primary", use_container_width=True)
+            submit = st.form_submit_button("Send", type="primary", width="stretch")
         
         if submit and user_input:
             st.session_state.messages.append({"role": "user", "content": user_input})
@@ -1245,7 +1245,7 @@ elif selected_module == "Incident Analyzer":
         
         with col_export:
             st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
-            if st.button("📥 Export CSV", use_container_width=True, key="export_incidents"):
+            if st.button("📥 Export CSV", width="stretch", key="export_incidents"):
                 historical = simulate_historical_incidents(days_back=7)
                 export_to_csv(historical, "incidents")
         
@@ -1320,7 +1320,7 @@ elif selected_module == "Incident Analyzer":
                     modebar_add=['zoom', 'pan', 'select', 'zoomin', 'zoomout', 'autoscale', 'resetscale']
                 )
                 
-                st.plotly_chart(fig_timeline, use_container_width=True, config={
+                st.plotly_chart(fig_timeline, , config={
                     'displayModeBar': True,
                     'displaylogo': False,
                     'toImageButtonOptions': {
@@ -1341,7 +1341,7 @@ elif selected_module == "Incident Analyzer":
                 display = df_timeline[["time", "asset_id", "description", "severity", "status"]]
                 display.columns = ["Timestamp", "Asset", "Event Description", "Severity", "Status"]
                 
-                st.dataframe(display, hide_index=True, use_container_width=True)
+                st.dataframe(display, hide_index=True, width="stretch")
                 
                 # Pagination controls
                 if total_pages > 1:
@@ -1349,7 +1349,7 @@ elif selected_module == "Incident Analyzer":
                     
                     with col_prev:
                         if st.button("◀ Previous", disabled=st.session_state.incident_page == 0,
-                                   use_container_width=True):
+                                   ):
                             st.session_state.incident_page -= 1
                             st.rerun()
                     
@@ -1359,7 +1359,7 @@ elif selected_module == "Incident Analyzer":
                     
                     with col_next:
                         if st.button("Next ▶", disabled=st.session_state.incident_page >= total_pages - 1,
-                                   use_container_width=True):
+                                   ):
                             st.session_state.incident_page += 1
                             st.rerun()
                 
@@ -1488,7 +1488,7 @@ elif selected_module == "Incident Analyzer":
                             height=300
                         )
                         
-                        st.plotly_chart(fig_dga, use_container_width=True)
+                        st.plotly_chart(fig_dga)
                     
                     with col2:
                         confidence_class = "badge-success" if dga.confidence > 0.8 else "badge-warning" if dga.confidence > 0.6 else "badge-error"
@@ -1529,7 +1529,7 @@ elif selected_module == "System Analytics":
             time_range = st.selectbox("📊 Time Range", ["Last 7 Days", "Last 30 Days", "Last 90 Days"])
         with col_export:
             st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
-            if st.button("📥 Export Analytics", use_container_width=True):
+            if st.button("📥 Export Analytics", width="stretch"):
                 historical = simulate_historical_incidents(days_back=90)
                 export_to_csv(historical, "analytics_report")
         
@@ -1570,7 +1570,7 @@ elif selected_module == "System Analytics":
             modebar_add=['zoom', 'pan', 'zoomin', 'zoomout', 'autoscale']
         )
         
-        st.plotly_chart(fig_trend, use_container_width=True, config={
+        st.plotly_chart(fig_trend, , config={
             'displayModeBar': True,
             'displaylogo': False,
             'toImageButtonOptions': {
@@ -1602,7 +1602,7 @@ elif selected_module == "System Analytics":
                 showlegend=True,
                 modebar_add=['toImage']
             )
-            st.plotly_chart(fig_pie, use_container_width=True, config={'displayModeBar': True, 'displaylogo': False})
+            st.plotly_chart(fig_pie, config={'displayModeBar': True, 'displaylogo': False})
         
         with col2:
             st.markdown("#### Top Affected Assets")
@@ -1623,7 +1623,7 @@ elif selected_module == "System Analytics":
                 height=300
             )
             
-            st.plotly_chart(fig_assets, use_container_width=True)
+            st.plotly_chart(fig_assets)
         
         with col3:
             st.markdown("#### Resolution Status")
@@ -1641,7 +1641,7 @@ elif selected_module == "System Analytics":
                 height=300
             )
             
-            st.plotly_chart(fig_status, use_container_width=True)
+            st.plotly_chart(fig_status)
         
         # Detailed incident log
         st.markdown("---")
