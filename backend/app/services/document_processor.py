@@ -1,6 +1,19 @@
 """
-Document Processing Service
-Handles PDF/DOCX ingestion, text extraction, chunking, and embedding
+Atlas AI - Document Processing Service
+========================================
+Handles ingestion of PDF, DOCX, and plain-text files for the RAG pipeline:
+
+1. **Text extraction** – PDF (PyPDF2), DOCX (python-docx), TXT/MD (utf-8)
+2. **Chunking** – overlapping token-based windows using ``tiktoken``
+3. **Metadata** – filename, type, size, and token position attached to each chunk
+
+The ``DocumentProcessor`` class is instantiated as a module-level singleton
+(``document_processor``) and shared across the application.
+
+Author  : Ezenwanne Kenneth
+Project : Atlas AI – Operational Intelligence & Incident Response Platform
+Version : 1.0.0
+License : MIT
 """
 from typing import List, Dict, Optional
 from pathlib import Path

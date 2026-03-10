@@ -1,32 +1,58 @@
-# Core Dependencies
-fastapi>=0.100.0
-uvicorn[standard]>=0.20.0
-python-multipart
+# =============================================================================
+# Atlas AI – Python Dependencies
+# =============================================================================
+# Author  : Ezenwanne Kenneth
+# Project : Atlas AI – Operational Intelligence & Incident Response Platform
+#
+# Pin major versions for reproducibility; minor/patch versions are left flexible
+# so security patches are picked up automatically.
+# All packages have pre-built wheels for Python 3.11 – no Rust/C compilation.
+# =============================================================================
 
-# AI/ML - Only what we actually use
-groq>=0.4.0
-sentence-transformers>=2.0.0
-tiktoken>=0.5.0
+# ---------------------------------------------------------------------------
+# Web framework & server
+# ---------------------------------------------------------------------------
+fastapi>=0.100.0,<1.0.0
+uvicorn[standard]>=0.20.0,<1.0.0
+python-multipart>=0.0.9        # required for file uploads (UploadFile)
 
-# Data Processing
+# ---------------------------------------------------------------------------
+# AI / ML
+# ---------------------------------------------------------------------------
+groq>=0.4.0                    # Groq cloud LLM API (free tier)
+sentence-transformers>=2.0.0   # Local sentence embeddings (all-MiniLM-L6-v2)
+tiktoken>=0.5.0                # Token counting for chunking (cl100k_base)
+
+# ---------------------------------------------------------------------------
+# Data processing
+# ---------------------------------------------------------------------------
 pandas>=2.0.0
-numpy
+numpy>=1.24.0
 pydantic>=2.0.0
-pydantic-settings
-python-dotenv
+pydantic-settings>=2.0.0
+python-dotenv>=1.0.0
 
-# Document Processing
-pypdf2
-python-docx
+# ---------------------------------------------------------------------------
+# Document ingestion
+# ---------------------------------------------------------------------------
+pypdf2>=3.0.0                  # PDF text extraction
+python-docx>=1.0.0             # DOCX text extraction
 
-# Web Interface
-streamlit>=1.30.0
+# ---------------------------------------------------------------------------
+# Web / HTTP
+# ---------------------------------------------------------------------------
+httpx>=0.25.0                  # Async HTTP client used by LLM providers
+
+# ---------------------------------------------------------------------------
+# Frontend
+# ---------------------------------------------------------------------------
+streamlit>=1.30.0,<2.0.0
 plotly>=5.0.0
-pytest-cov==4.1.0
-httpx==0.26.0
 
-# Utilities
-python-jose[cryptography]==3.3.0
-passlib[bcrypt]==1.7.4
-aiofiles==23.2.1
-sentence-transformers==2.3.1
+# ---------------------------------------------------------------------------
+# Testing & quality
+# ---------------------------------------------------------------------------
+pytest>=7.0.0
+pytest-cov>=4.0.0
+pytest-asyncio>=0.21.0
+httpx>=0.25.0                  # also used as AsyncClient in tests

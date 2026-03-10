@@ -1,4 +1,23 @@
-"""Simple in-memory vector store for RAG without ChromaDB dependency"""
+"""
+Atlas AI - In-Memory Vector Store
+===================================
+Lightweight, dependency-free vector store backed by NumPy cosine-similarity
+search.  State is persisted to disk as pickle files so indexed documents
+survive service restarts.
+
+Design decisions
+----------------
+* **No ChromaDB/Faiss dependency** – keeps the Docker image small and avoids
+  Rust compilation on Render's free tier.
+* **Pickle persistence** – sufficient for Capstone scale; swap for a proper
+  vector DB (Qdrant, pgvector) when scaling to production.
+* **Cosine similarity** – standard metric for sentence-embedding retrieval.
+
+Author  : Ezenwanne Kenneth
+Project : Atlas AI – Operational Intelligence & Incident Response Platform
+Version : 1.0.0
+License : MIT
+"""
 import numpy as np
 from typing import List, Dict, Any, Optional
 import pickle

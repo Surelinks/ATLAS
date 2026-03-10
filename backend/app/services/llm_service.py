@@ -1,14 +1,61 @@
 """
-LLM Service - Abstraction layer supporting multiple providers
-Supports: OpenAI, Grok, Ollama (free local models), and future providers
+Atlas AI - LLM Service
+========================
+Abstraction layer that normalises access to multiple LLM providers behind a
+single ``LLMService`` interface.  Supported providers:
+
+* **Groq**  – free-tier cloud inference (default)
+* **OpenAI** – paid, highest quality
+* **Ollama** – self-hosted, fully offline
+
+The active provider is selected via the ``LLM_PROVIDER`` environment variable.
+Provider credentials are loaded lazily so the module can be imported during CI
+without requiring API keys.
+
+A *singleton* ``SentenceTransformer`` model is cached at module level so that
+the 80 MB weights are downloaded and loaded only once per process lifetime.
+
+Author  : Ezenwanne Kenneth
+Project : Atlas AI – Operational Intelligence & Incident Response Platform
+Version : 1.0.0
+License : MIT
 """
-from typing import Optional, List, Dict, Any
-from abc import ABC, abstractmethod
-import httpx
-from app.core.config import settings
+
+from __future__ import annotations
+
 import logging
+from abc import ABC, abstractmethod
+from typing import Any, Dict, List, Optional
+
+import httpx
+
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
+
+# ---------------------------------------------------------------------------
+# Singleton embedding model
+# Loaded once per process; all providers share the same instance.
+# ---------------------------------------------------------------------------
+
+_embedding_model = None  # type: Any
+
+
+def _get_embedding_model():
+    """Return (and lazily initialise) the shared SentenceTransformer instance."""
+    global _embedding_model  # noqa: PLW0603
+    if _embedding_model is None:
+        try:
+            from sentence_transformers import SentenceTransformer  # noqa: PLC0415
+
+            _embedding_model = SentenceTransformer(settings.EMBEDDING_MODEL)
+            logger.info("Loaded embedding model: %s", settings.EMBEDDING_MODEL)
+        except ImportError as exc:
+            raise ImportError(
+                "sentence-transformers is required for embeddings. "
+                "Install it with: pip install sentence-transformers"
+            ) from exc
+    return _embedding_model
 
 
 class LLMProvider(ABC):
@@ -121,20 +168,12 @@ class GroqProvider(LLMProvider):
     
     async def embed(self, text: str) -> List[float]:
         """
-        Groq doesn't have embeddings endpoint yet
-        Fall back to sentence-transformers for free local embeddings
+        Groq does not yet expose an embeddings endpoint.
+        Falls back to the shared ``SentenceTransformer`` instance for
+        fast, free, local embeddings (model: all-MiniLM-L6-v2).
         """
-        try:
-            from sentence_transformers import SentenceTransformer
-            
-            # Use a lightweight model for embeddings
-            model = SentenceTransformer('all-MiniLM-L6-v2')
-            embedding = model.encode(text).tolist()
-            return embedding
-        except ImportError:
-            logger.error("sentence-transformers not installed. Install with: pip install sentence-transformers")
-            # Return zero vector as last resort
-            return [0.0] * 384
+        model = _get_embedding_model()
+        return model.encode(text).tolist()
 
 
 class OpenAIProvider(LLMProvider):

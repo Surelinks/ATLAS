@@ -1,6 +1,21 @@
 """
-RAG (Retrieval-Augmented Generation) Service
-Orchestrates document retrieval and LLM generation for SOP queries
+Atlas AI - RAG (Retrieval-Augmented Generation) Service
+=========================================================
+Orchestrates the full RAG pipeline for the Operations Copilot:
+
+1. **Ingest** – accept a document, chunk it, embed each chunk, and store in
+   the vector index.
+2. **Retrieve** – embed the user’s question and retrieve the top-k most
+   similar SOP chunks via cosine similarity.
+3. **Generate** – feed retrieved context + question to the LLM and return a
+   grounded, cited answer.
+4. **Confidence scoring** – label answers as ``high`` / ``medium`` / ``low``
+   based on the top retrieval similarity score.
+
+Author  : Ezenwanne Kenneth
+Project : Atlas AI – Operational Intelligence & Incident Response Platform
+Version : 1.0.0
+License : MIT
 """
 from typing import List, Dict, Optional
 import logging
@@ -136,10 +151,18 @@ Always prioritize safety and compliance."""
                 system_prompt=self.system_prompt
             )
             
-            # Step 4: Prepare response
+            # Step 4: Prepare response with calibrated confidence score
+            top_similarity = search_results[0]["similarity"] if search_results else 0.0
+            if top_similarity >= 0.75:
+                confidence = "high"
+            elif top_similarity >= 0.50:
+                confidence = "medium"
+            else:
+                confidence = "low"
+
             response = {
                 "answer": answer,
-                "confidence": "high" if len(search_results) >= 2 else "medium"
+                "confidence": confidence,
             }
             
             if include_sources:
