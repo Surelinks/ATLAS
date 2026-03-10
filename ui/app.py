@@ -1320,7 +1320,7 @@ elif selected_module == "Incident Analyzer":
                     modebar_add=['zoom', 'pan', 'select', 'zoomin', 'zoomout', 'autoscale', 'resetscale']
                 )
                 
-                st.plotly_chart(fig_timeline, , config={
+                st.plotly_chart(fig_timeline, config={
                     'displayModeBar': True,
                     'displaylogo': False,
                     'toImageButtonOptions': {
@@ -1570,7 +1570,7 @@ elif selected_module == "System Analytics":
             modebar_add=['zoom', 'pan', 'zoomin', 'zoomout', 'autoscale']
         )
         
-        st.plotly_chart(fig_trend, , config={
+        st.plotly_chart(fig_trend, config={
             'displayModeBar': True,
             'displaylogo': False,
             'toImageButtonOptions': {
