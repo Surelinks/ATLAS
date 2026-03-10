@@ -757,13 +757,13 @@ with st.sidebar:
     
     theme_col1, theme_col2 = st.columns(2)
     with theme_col1:
-        if st.button("🌙 Dark", , 
+        if st.button("🌙 Dark",
                     disabled=st.session_state.theme == "dark"):
             st.session_state.theme = "dark"
             st.rerun()
     
     with theme_col2:
-        if st.button("☀️ Light", ,
+        if st.button("☀️ Light",
                     disabled=st.session_state.theme == "light"):
             st.session_state.theme = "light"
             st.rerun()
