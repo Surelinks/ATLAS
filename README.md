@@ -488,5 +488,6 @@ This is a capstone project for educational purposes.
 
 ## 👤 Author
 
-**MSSE66+ Capstone Project**  
-Date: January 2026
+Ezenwanne Kenneth
+Quantic **MSSE66+ Capstone Project**  
+Date: March 2026
