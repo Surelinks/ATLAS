@@ -4,7 +4,8 @@
 > **Institution:** Capstone Project – MSSE66+  
 > **Version:** 1.0.0 | **License:** MIT  
 > **Live Demo:** https://atlas-ai-frontend.onrender.com  
-> **API Docs:** https://atlas-ai-backend-bz3o.onrender.com/docs
+> **API Docs:** https://atlas-ai-backend-bz3o.onrender.com/docs  
+> **Agile Task Board:** https://github.com/users/Surelinks/projects/2
 
 ---
 
