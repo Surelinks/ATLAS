@@ -632,29 +632,29 @@ if "severity_filter" not in st.session_state:
 
 # ==================== API CLIENT ====================
 
-async def call_api(endpoint: str, method: str = "GET", **kwargs) -> Optional[Dict]:
-    """Async API client with error handling"""
+def call_api(endpoint: str, method: str = "GET", **kwargs) -> Optional[Dict]:
+    """Synchronous API client with error handling."""
     try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        with httpx.Client(timeout=30.0) as client:
             url = f"{API_BASE_URL}{endpoint}"
-            
+
             if method == "GET":
-                response = await client.get(url, **kwargs)
+                response = client.get(url, **kwargs)
             elif method == "POST":
-                response = await client.post(url, **kwargs)
+                response = client.post(url, **kwargs)
             elif method == "DELETE":
-                response = await client.delete(url, **kwargs)
+                response = client.delete(url, **kwargs)
             else:
                 return None
-            
+
             if response.status_code == 200:
                 return response.json()
             else:
                 st.error(f"API Error: {response.status_code} - {response.text}")
                 return None
-                
+
     except httpx.ConnectError:
-        st.error("Cannot connect to backend API. Ensure server is running on port 8000.")
+        st.error("Cannot connect to backend API. Ensure the server is running on port 8000.")
         return None
     except Exception as e:
         st.error(f"API request failed: {str(e)}")
@@ -775,7 +775,7 @@ with st.sidebar:
     
     # Check API health
     try:
-        health_response = asyncio.run(call_api("/health"))
+        health_response = call_api("/health")
         api_status = "ONLINE" if health_response else "OFFLINE"
         api_class = "status-online" if health_response else "status-offline"
     except:
@@ -808,7 +808,7 @@ with st.sidebar:
     
     # Get document count from API
     try:
-        docs_response = asyncio.run(call_api("/api/v1/ops-copilot/documents"))
+        docs_response = call_api("/api/v1/ops-copilot/documents")
         if docs_response and "documents" in docs_response:
             doc_count = len(docs_response["documents"])
         else:
@@ -1048,9 +1048,7 @@ elif selected_module == "Operations Copilot":
                 with st.spinner("Processing documents..."):
                     for file in uploaded_files:
                         files = {"file": (file.name, file.getvalue(), file.type)}
-                        result = asyncio.run(
-                            call_api("/api/v1/ops-copilot/ingest", method="POST", files=files)
-                        )
+                        result = call_api("/api/v1/ops-copilot/ingest", method="POST", files=files)
                         
                         if result and result.get("status") == "success":
                             chunk_count = result.get("chunk_count", "?")
@@ -1062,7 +1060,7 @@ elif selected_module == "Operations Copilot":
         
         # Document list
         st.markdown("#### Indexed Documents")
-        docs_response = asyncio.run(call_api("/api/v1/ops-copilot/documents"))
+        docs_response = call_api("/api/v1/ops-copilot/documents")
         
         if docs_response and "documents" in docs_response:
             documents = docs_response["documents"]
@@ -1149,12 +1147,10 @@ elif selected_module == "Operations Copilot":
             st.session_state.messages.append({"role": "user", "content": user_input})
             
             with st.spinner("Searching knowledge base..."):
-                response = asyncio.run(
-                    call_api("/api/v1/ops-copilot/query", method="POST", json={
-                        "question": user_input,
-                        "top_k": 3
-                    })
-                )
+                response = call_api("/api/v1/ops-copilot/query", method="POST", json={
+                    "question": user_input,
+                    "top_k": 3
+                })
                 
                 if response and "answer" in response:
                     answer = response["answer"]
@@ -1173,12 +1169,10 @@ elif selected_module == "Operations Copilot":
             )
             
             if last_user_msg:
-                response = asyncio.run(
-                    call_api("/api/v1/ops-copilot/query", method="POST", json={
-                        "question": last_user_msg["content"],
-                        "top_k": 3
-                    })
-                )
+                response = call_api("/api/v1/ops-copilot/query", method="POST", json={
+                    "question": last_user_msg["content"],
+                    "top_k": 3
+                })
                 
                 if response and "sources" in response:
                     st.markdown("#### Source Documents")
